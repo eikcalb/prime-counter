@@ -1,4 +1,4 @@
-package prime
+package core
 
 import (
 	"fmt"
@@ -15,6 +15,10 @@ func TestIsPrimes(t *testing.T) {
 	}{
 		{1, false},
 		{2, true},
+		{25, false},
+		{11, true},
+		{5, true},
+		{6, false},
 		{4, false},
 		{31, true},
 		{92, false},
@@ -50,5 +54,5 @@ func BenchmarkPrimeGenerator(b *testing.B) {
 	b.StartTimer()
 	prime.GeneratePrimes()
 	b.StopTimer()
-	b.Logf("%v", prime.Primes)
+	b.Logf("b.N was set to %v\r\n", prime.PrimeCount)
 }

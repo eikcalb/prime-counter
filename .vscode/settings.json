@@ -6,5 +6,6 @@
     "go.toolsEnvVars": {
         "GOARCH": "wasm",
         "GOOS": "js"
-    }
+    },
+    "go.testFlags": ["-count=1"]
 }

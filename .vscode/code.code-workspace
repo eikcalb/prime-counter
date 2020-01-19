@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "C:\\lord\\dev\\web\\prime-counter"
+		},
+		{
+			"path": "C:\\lord\\dev\\web\\prime-counter\\go"
+		}
+	],
+	"settings": {
+		"go.testEnvVars": {
+			"GOARCH": "wasm",
+			"GOOS": "js"
+		},
+		"go.toolsEnvVars": {
+			"GOARCH": "wasm",
+			"GOOS": "js"
+		}
+	}
+}

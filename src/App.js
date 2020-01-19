@@ -4,23 +4,48 @@ import './App.css';
 
 const ContextType = {
   WEBASSEMBLY: 0b001,
-  JAVASCRIPT: 0b010
+  JAVASCRIPT: 0b010,
+  WEBWORKER: 0B100
 }
 
+/**
+ * Main entry for application.
+ * 
+ * Broser feature detection is handled here.
+ * The logic within may be pushed into a `React.Context` object if required.
+ * 
+ * ... not today!
+ */
 class App extends React.PureComponent {
 
-  state={
-
+  state = {
+    // user JavaScript engine by default for computation.
+    engine: ContextType.JAVASCRIPT
   }
 
   componentDidMount() {
-    // eslint-disable-next-line no-undef
-    let go = new Go();
 
-    WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then((result) => {
-      go.run(result.instance);
-    });
   }
+
+  handleLogic() {
+    switch (this.state.engine) {
+      case ContextType.JAVASCRIPT:
+
+        break;
+      case ContextType.WEBASSEMBLY:
+        break;
+      case ContextType.WEBWORKER:
+        break;
+
+      default:
+        throw new Error("Dunno how you got here JS. Please report bug!!!!!")
+    }
+  }
+
+  setContextType(type) {
+    this.setState({ engine: type })
+  }
+
 
   render() {
     return (

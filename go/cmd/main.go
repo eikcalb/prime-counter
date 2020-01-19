@@ -5,6 +5,7 @@ import (
 )
 
 func main() {
-	prime := prime.New(10)
-	prime.Start()
+	primeInstance := prime.New(10)
+	prime.Console.Log(("Hello WebAssembly!"))
+	primeInstance.Start()
 }
