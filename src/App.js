@@ -33,7 +33,7 @@ class App extends React.PureComponent {
     engine: ContextType.JAVASCRIPT,
     context: new JSContext(),
     primes: [],
-    status: "Prime Counter generates a specified amount of prime numbers and calculates the product, displaying results in a table. You can select between the JavaScript or WebAssembly engine."
+    status: ""
   }
 
   async componentDidMount() {
@@ -159,8 +159,13 @@ class App extends React.PureComponent {
             })
           }}>Inflate Table</button>
 
-          <div>
+          <div className="error">
             <p id='status'>{this.state.status}</p>
+          </div>
+          <div>
+            <p>
+              Prime Counter generates a specified amount of prime numbers and calculates the product, displaying results in a table. You can select between the JavaScript or WebAssembly engine.
+            </p>
           </div>
         </main>
         <address><p>&copy; eikcalb, {(new Date()).getFullYear()}</p></address>
