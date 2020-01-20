@@ -18,6 +18,18 @@ class Base {
         throw new Error("Not implemented yet!")
     }
 
+    async inflateTable() {
+        throw new Error("Not yet implemented!")
+    }
+
+    async getPrimes() {
+        throw new Error("Not yet implemented!")
+    }
+
+    async setPrimeCount() {
+        throw new Error("Not yet implemented!")
+    }
+
     stop() {
         throw new Error("Not implemented yet!")
     }
@@ -31,6 +43,26 @@ export class JSContext extends Base {
     // Should work fine across many browsers.
     async run() {
         console.log('JSContext running!')
+    }
+
+    async inflateTable() {
+        this.prime.generatePrimes()
+        this.prime.createTable((x, y, value) => {
+            // callback to inflate values to table.
+            // The table cells must already exist.
+            const el = document.getElementById(`x${x}y${y}`)
+            if (!el) return // silently continue
+            el.innerText = value
+        })
+    }
+
+    async getPrimes() {
+        return this.prime.primes || await this.prime.generatePrimes()
+    }
+
+    async setPrimeCount(count) {
+        this.prime.primeCount = count >= 1 ? count : 1
+        return await this.prime.generatePrimes()
     }
 
     stop() {
@@ -57,14 +89,16 @@ export class WorkerContext extends Base {
 }
 
 export class GOContext extends Base {
-    go = null
+    // Local variable for storing WASM instance.
+    go
+    static instance = null
 
     constructor() {
         // Confirm WASM dependency.
         //
         // For some unknown reason, Edge browser does not support Golang WASM module.
         // ... oh well!
-        if (!!WebAssembly && "Go" in Window && typeof window.Go === 'function') {
+        if (!!WebAssembly && "Go" in global && typeof global.Go === 'function') {
             // Golang dependencies are available!
             super()
         } else {
@@ -74,13 +108,39 @@ export class GOContext extends Base {
     }
 
     async run() {
-        let go = new window.Go();
+        let go
+        if (!this.go) {
+            go = new window.Go();
+            this.go = go
+        } else {
+            go = this.go
+        }
+
         return WebAssembly.instantiateStreaming(fetch("main.wasm"), go.importObject).then((result) => {
-            go.run(result.instance);
+            GOContext.instance = result.instance
+            go.run(GOContext.instance);
         });
     }
 
+    async inflateTable() {
+        return window.golangInflateTable()
+    }
+
+    async getPrimes() {
+        return global.golangGetPrimes()
+    }
+
+    async setPrimeCount(count) {
+        let counter = global.golangSetPrimeCount(count)
+        console.log(counter, "Go res")
+        return counter
+    }
+
     stop() {
-        this.go.exit()
+        if (!this.go.exited) {
+            global.golangShutdown()
+            GOContext.instance = null
+            this.go.exit(0)
+        }
     }
 }

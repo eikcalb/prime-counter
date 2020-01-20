@@ -1,5 +1,23 @@
 # Prime Counter
 
+## How to run
+
+The native code (Golang), has already been compiled into the `build` folder.
+This is a WebAssembly executable and should run on all supporting machines without modification.
+However, if required, the source code can be found in the `go` folder in the root directory.
+
+To run the application, you must have:
+
+- nodejs 8+
+- npm or yarn
+
+### Steps
+
+- Clone repository using `git clone https://github.com/eikcalb/prime-counter.git`
+- Enter the project directory and run:
+  - `npm start` to run the application in your default browser.
+    **NOTE:** Chrome is my most reommended choice as this was used in development :D.
+
 ## Logic
 
 The design is inspired by this documentation: [Simple test for prime numbers](https://en.wikipedia.org/wiki/Primality_test#Simple_methods).
@@ -38,3 +56,8 @@ Running the benchmark without adding 6 per loop, produced:
 ## JavaScript
 
 The JavaScript module has implemented the [above assumptions](#Logic) using recursion.
+
+## Observation
+
+Running with a count of 1000 fails to generate primes in js using Chrome (Version 79.0.3945.117 (Official Build) (64-bit)).
+However, it gets generate when on WebAssembly build.

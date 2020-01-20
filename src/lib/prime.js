@@ -24,6 +24,8 @@ export class Prime {
         arrayList = arrayList || []
         count = count || this.primeCount
         current = current || 2
+        if (Number.MAX_SAFE_INTEGER < (current + 2)) throw new Error("Possible stackoverflow!")
+        
         if (this.primeChecker({ number: current })) arrayList.push(current)
 
         if (arrayList.length < count) {
@@ -76,7 +78,7 @@ export class Prime {
      * @param {number[]} primes Array containing optional mock array. If absent, the object will use internal array list.
      */
     async createTable(callback, primes) {
-        this.primes = primes || this.primes || null
+        this.primes = primes || this.primes || this.generatePrimes()
 
         if (!this.primes || typeof this.primes !== 'object') {
             throw new Error("Primes not available to work with!")

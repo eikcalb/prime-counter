@@ -1,8 +1,4 @@
 {
-    "go.testEnvVars": {
-        "GOARCH": "wasm",
-        "GOOS": "js"
-    },
     "go.toolsEnvVars": {
         "GOARCH": "wasm",
         "GOOS": "js"

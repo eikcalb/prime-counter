@@ -44,14 +44,14 @@ func New(numberOfPrimes int) *Prime {
 
 func (p *Prime) inflateTable(this js.Value, args []js.Value) interface{} {
 	doc := js.Global().Get("document")
-	var result [][]uint64
+	// var result [][]uint64
 	go func() {
 		p.engine.GeneratePrimes()
-		res, err := p.engine.CreateTable(func(x, y int, val uint64) {
+		_, err := p.engine.CreateTable(func(x, y int, val uint64) {
 			// The table element should be available.
 			//
 			// Cels in the table must be identified by cartesian coordinates.
-			cell := doc.Call("getElementById", fmt.Sprintf("%v%v", x, y))
+			cell := doc.Call("getElementById", fmt.Sprintf("x%vy%v", x, y))
 			cell.Set("innerText", val)
 		})
 		if err != nil {
@@ -59,10 +59,10 @@ func (p *Prime) inflateTable(this js.Value, args []js.Value) interface{} {
 			return
 		}
 
-		result = res
+		// result = res
 	}()
 
-	return result
+	return nil
 }
 
 func (p *Prime) Start() {
@@ -73,11 +73,33 @@ func (p *Prime) Start() {
 			p.Stop()
 			return nil
 		}),
+		"getPrimes": js.FuncOf(func(first js.Value, args []js.Value) interface{} {
+			if p.engine.Primes == nil {
+				p.engine.GeneratePrimes()
+			}
+
+			return toInterfaceArray(p.engine.Primes)
+		}),
+		"setPrimeCount": js.FuncOf(func(first js.Value, args []js.Value) interface{} {
+			if len(args) < 1 {
+				return nil
+			}
+			count := args[0].Int()
+			if count < 1 {
+				count = 1
+			}
+			p.engine.PrimeCount = count
+			p.engine.GeneratePrimes()
+			return toInterfaceArray(p.engine.Primes)
+		}),
 	}
+
 	Console.Log("Starting Golang application...")
 
 	js.Global().Set("golangInflateTable", functions["iftF"])
 	js.Global().Set("golangShutdown", functions["shutdown"])
+	js.Global().Set("golangGetPrimes", functions["getPrimes"])
+	js.Global().Set("golangSetPrimeCount", functions["setPrimeCount"])
 	Console.Log("...registering required functions on global object...")
 	// Listen to signal from channel.
 	// This will stop program execution.
@@ -94,6 +116,13 @@ func (p *Prime) Start() {
 Stop stops the application execution by sending signal to channel.
 */
 func (p *Prime) Stop() {
-	js.Global().Set("golangInflateTable", nil)
 	run <- false
+}
+
+func toInterfaceArray(input []uint64) []interface{} {
+	result := make([]interface{}, len(input))
+	for index, val := range input {
+		result[index] = val
+	}
+	return result
 }
